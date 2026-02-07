@@ -8,12 +8,6 @@ cd "$ROOT_DIR"
 pyinstaller \
   --noconfirm \
   --clean \
-  --name "$NAME" \
-  --windowed \
-  --onedir \
-  --specpath . \
-  --distpath dist \
-  --workpath build \
   orzalan.spec
 
 mkdir -p "dist/$NAME/assets"
