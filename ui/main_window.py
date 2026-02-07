@@ -145,7 +145,7 @@ class MainWindow(QMainWindow):
         self._lbl_credits.setObjectName("SidebarCredits")
         self._lbl_credits.setWordWrap(True)
         self._lbl_repo = QLabel(
-            '<a href="https://github.com/javier-feijoo/ORZALAN">Manual de ayuda</a>'
+            '<a href="https://github.com/javier-feijoo/orzalan">Manual de ayuda</a>'
         )
         self._lbl_repo.setObjectName("SidebarLink")
         self._lbl_repo.setOpenExternalLinks(True)
@@ -299,7 +299,7 @@ class MainWindow(QMainWindow):
         # Status bar
         self.statusBar().showMessage(t("ready"))
         if hasattr(self, "_lbl_repo"):
-            self._lbl_repo.setText(f'<a href="https://github.com/javier-feijoo/ORZALAN">{t("open_repo")}</a>')
+            self._lbl_repo.setText(f'<a href="https://github.com/javier-feijoo/orzalan">{t("open_repo")}</a>')
         if hasattr(self, "_lbl_license"):
             self._lbl_license.setText(
                 '<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Licencia CC BY-NC-SA 4.0</a>'

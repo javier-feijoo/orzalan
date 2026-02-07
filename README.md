@@ -2,7 +2,7 @@
 
 Aplicación de presupuestos y catálogo para formación en redes, creada en Python con PySide6.
 
-Repositorio: `https://github.com/javier-feijoo/ORZALAN`
+Repositorio: `https://github.com/javier-feijoo/orzalan`
 
 Manual de ayuda: `MANUAL.md`
 
