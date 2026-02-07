@@ -6,6 +6,12 @@ Repositorio: `https://github.com/javier-feijoo/orzalan`
 
 Manual de ayuda: `MANUAL.md`
 
+## Capturas
+
+![Catálogo](docs/images/captura1.png)
+
+![Configuración](docs/images/captura2.png)
+
 ## Requisitos
 
 - Python 3.12
