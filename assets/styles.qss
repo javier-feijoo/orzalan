@@ -1,0 +1,336 @@
+/* Base QSS - modern light */
+
+QMainWindow {
+    background: #f5f7fb;
+}
+
+QWidget {
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
+
+QFrame#TopBar {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+QLabel#TopBarTitle {
+    color: #0f172a;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+}
+
+QLabel#TopBarSubtitle {
+    color: #475569;
+    font-size: 12px;
+}
+
+QFrame#Sidebar {
+    background: #eef2f7;
+    border-right: 1px solid #d5dde6;
+}
+
+QLabel#SidebarTitle {
+    color: #1f2937;
+    font-size: 16px;
+    font-weight: 600;
+    padding-left: 4px;
+}
+
+QPushButton#SidebarToggle {
+    border: 1px solid #d4dde8;
+    background: #e8eef6;
+    color: #1f2937;
+    font-size: 12px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    border-radius: 6px;
+    padding: 0px;
+}
+
+QPushButton#SidebarToggle:hover {
+    background: #dde7f3;
+}
+
+QLabel#SidebarCredits {
+    color: #475569;
+    font-size: 9pt;
+}
+
+QLabel#SidebarLink {
+    color: #2563eb;
+    font-size: 9pt;
+}
+
+QListWidget#NavList {
+    background: transparent;
+    border: 0px solid transparent;
+    color: #1f2937;
+}
+
+QListWidget#NavList::item {
+    padding: 9px 10px;
+    margin: 2px 4px;
+    border-radius: 8px;
+}
+
+QListWidget#NavList::item:hover {
+    background: #e7eef9;
+}
+
+QListWidget#NavList::item:selected {
+    background: #cfe3ff;
+    color: #0f172a;
+    border-left: 3px solid #3b82f6;
+}
+
+QLabel#PageTitle {
+    color: transparent;
+    font-size: 0px;
+    font-weight: 400;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    background: transparent;
+    max-height: 0px;
+    min-height: 0px;
+}
+
+QLabel#SectionTitle {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+QLabel#HeaderChip {
+    font-weight: 700;
+    font-size: 12px;
+    color: #0f172a;
+    padding: 4px 10px;
+    background: transparent;
+    border: 0px;
+    border-radius: 0px;
+}
+
+QWidget#HeaderBar {
+    background: #eef2f7;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+QToolButton#HeaderToggle {
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+QToolButton#HeaderToggle:hover {
+    background: #f1f5f9;
+}
+
+QLabel, QLineEdit, QComboBox, QTableView, QListWidget {
+    color: #1f2937;
+}
+
+QLineEdit, QComboBox {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 6px 8px;
+    border-radius: 6px;
+    min-height: 28px;
+}
+
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid #5b8def;
+}
+
+QPushButton {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: #1f2937;
+    min-height: 28px;
+}
+
+QPushButton:hover {
+    background: #f1f5f9;
+}
+
+QPushButton:pressed {
+    background: #e2e8f0;
+}
+
+QPushButton:disabled {
+    color: #94a3b8;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+QGroupBox {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 6px;
+    left: 8px;
+    color: #0f172a;
+}
+
+QTableView {
+    background: #ffffff;
+    alternate-background-color: #f8fafc;
+    gridline-color: #e5e7eb;
+}
+
+QHeaderView::section {
+    background: #eef2f7;
+    color: #475569;
+    padding: 6px 8px;
+    border: 0px solid transparent;
+    font-weight: 600;
+}
+
+QTableWidget#QuoteLinesTable QHeaderView::section {
+    padding: 8px 10px;
+    background: #e9eff7;
+    color: #1f2937;
+    border: 0px;
+    font-weight: 700;
+}
+
+QTableView::item:selected {
+    background: #cfe3ff;
+    color: #0f172a;
+}
+
+/* Dark theme overrides (when main window has theme=dark) */
+QMainWindow[theme="dark"] {
+    background: #0f172a;
+}
+
+QMainWindow[theme="dark"] QFrame#Sidebar {
+    background: #111827;
+    border-right: 1px solid #1f2937;
+}
+
+QMainWindow[theme="dark"] QLabel#SidebarTitle,
+QMainWindow[theme="dark"] QLabel#PageTitle,
+QMainWindow[theme="dark"] QLabel#SectionTitle,
+QMainWindow[theme="dark"] QLabel,
+QMainWindow[theme="dark"] QLineEdit,
+QMainWindow[theme="dark"] QComboBox,
+QMainWindow[theme="dark"] QTableView,
+QMainWindow[theme="dark"] QListWidget {
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QPushButton#SidebarToggle {
+    background: #1f2937;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QLabel#SidebarCredits {
+    color: #94a3b8;
+}
+
+QMainWindow[theme="dark"] QLabel#SidebarLink {
+    color: #93c5fd;
+}
+
+QMainWindow[theme="dark"] QListWidget#NavList::item:hover {
+    background: #1f2937;
+}
+
+QMainWindow[theme="dark"] QListWidget#NavList::item:selected {
+    background: #2b3a55;
+    color: #f8fafc;
+}
+
+QMainWindow[theme="dark"] QLineEdit,
+QMainWindow[theme="dark"] QComboBox {
+    background: #0b1220;
+    border: 1px solid #334155;
+}
+
+QMainWindow[theme="dark"] QLineEdit:focus,
+QMainWindow[theme="dark"] QComboBox:focus {
+    border: 1px solid #5b8def;
+}
+
+QMainWindow[theme="dark"] QPushButton {
+    background: #0b1220;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QPushButton:hover {
+    background: #1f2937;
+}
+
+QMainWindow[theme="dark"] QTableView {
+    background: #0b1220;
+    alternate-background-color: #111827;
+    gridline-color: #1f2937;
+}
+
+QMainWindow[theme="dark"] QHeaderView::section {
+    background: #111827;
+    color: #cbd5e1;
+}
+
+QMainWindow[theme="dark"] QTableWidget#QuoteLinesTable QHeaderView::section {
+    background: #0b1220;
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QTableView::item:selected {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QFrame#TopBar {
+    background: #0f172a;
+    border-bottom: 1px solid #1f2937;
+}
+
+QMainWindow[theme="dark"] QLabel#TopBarTitle {
+    color: #e2e8f0;
+}
+
+QMainWindow[theme="dark"] QLabel#TopBarSubtitle {
+    color: #94a3b8;
+}
+
+QMainWindow[theme="dark"] QLabel#HeaderChip {
+    color: #e2e8f0;
+    background: transparent;
+    border: 0px;
+}
+
+QMainWindow[theme="dark"] QWidget#HeaderBar {
+    background: #0b1220;
+    border: 1px solid #1f2937;
+}
+
+QMainWindow[theme="dark"] QToolButton#HeaderToggle {
+    background: #0b1220;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
