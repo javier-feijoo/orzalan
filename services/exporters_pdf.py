@@ -8,7 +8,15 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
-from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import (
+    Image,
+    KeepTogether,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 from db.models import Client, Product, Quote
 from db.session import get_session
@@ -40,7 +48,14 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
     settings = Settings.load()
     company = settings.data
 
-    doc = SimpleDocTemplate(str(path), pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm)
+    doc = SimpleDocTemplate(
+        str(path),
+        pagesize=A4,
+        leftMargin=12 * mm,
+        rightMargin=12 * mm,
+        topMargin=12 * mm,
+        bottomMargin=12 * mm,
+    )
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
         "QuoteTitle",
@@ -48,6 +63,8 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
         alignment=1,
         spaceAfter=6,
     )
+    small_style = ParagraphStyle("Small", parent=styles["Normal"], fontSize=8.5, leading=10)
+    tiny_style = ParagraphStyle("Tiny", parent=styles["Normal"], fontSize=8, leading=9.5)
     story = []
 
     # Header: logo + company data
@@ -75,11 +92,12 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
         company.get("company_web", ""),
     ]
     company_text = "<br/>".join([line for line in company_lines if line])
-    company_cell = Paragraph(company_text, styles["Normal"]) if company_text else ""
+    company_cell = Paragraph(company_text, small_style) if company_text else ""
+    usable_width = doc.width
 
     header_table = Table(
         [[logo_cell, company_cell]],
-        colWidths=[50 * mm, 130 * mm],
+        colWidths=[46 * mm, usable_width - (46 * mm)],
         hAlign="LEFT",
     )
     header_table.setStyle(
@@ -108,7 +126,7 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
         f"{t('valid_days')}: {quote.valid_days}",
     ]
     info_text = "<br/>".join([line for line in info_lines if line])
-    info_cell = Paragraph(info_text, styles["Normal"])
+    info_cell = Paragraph(info_text, small_style)
 
     client_lines = [
         client.name if client else "",
@@ -118,11 +136,11 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
         client.email if client else "",
     ]
     client_text = "<br/>".join([line for line in client_lines if line])
-    client_box = Paragraph(f"<b>{t('client').upper()}</b><br/>{client_text}", styles["Normal"])
+    client_box = Paragraph(f"<b>{t('client').upper()}</b><br/>{client_text}", small_style)
 
     info_table = Table(
         [[info_cell, client_box]],
-        colWidths=[100 * mm, 80 * mm],
+        colWidths=[usable_width * 0.56, usable_width * 0.44],
         hAlign="LEFT",
     )
     info_table.setStyle(
@@ -155,9 +173,9 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
     for line in lines:
         data.append(
             [
-                line.ref_snapshot,
-                line.desc_snapshot,
-                line.unit_snapshot,
+                Paragraph(str(line.ref_snapshot or ""), tiny_style),
+                Paragraph(str(line.desc_snapshot or ""), tiny_style),
+                Paragraph(str(line.unit_snapshot or ""), tiny_style),
                 f"{line.qty:.2f}",
                 f"{line.unit_price_snapshot:.2f}",
                 f"{line.line_subtotal:.2f}",
@@ -166,7 +184,17 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
             ]
         )
 
-    table = Table(data, hAlign="LEFT")
+    line_col_widths = [
+        usable_width * 0.11,  # ref
+        usable_width * 0.37,  # description
+        usable_width * 0.07,  # unit
+        usable_width * 0.08,  # qty
+        usable_width * 0.11,  # unit price
+        usable_width * 0.11,  # subtotal
+        usable_width * 0.07,  # vat %
+        usable_width * 0.08,  # total
+    ]
+    table = Table(data, colWidths=line_col_widths, hAlign="LEFT", repeatRows=1)
     table.setStyle(
         TableStyle(
             [
@@ -174,6 +202,10 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
                 ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                 ("ALIGN", (3, 1), (-1, -1), "RIGHT"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("LEADING", (0, 0), (-1, -1), 9.5),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
             ]
         )
     )
@@ -193,15 +225,41 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
                 ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
                 ("BACKGROUND", (0, -1), (-1, -1), colors.whitesmoke),
                 ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8.5),
             ]
         )
     )
-    story.append(totals_table)
-    story.append(Spacer(1, 6 * mm))
+    footer_blocks = [totals_table, Spacer(1, 5 * mm)]
 
     conditions = company.get("conditions") or company.get("notes") or ""
     if conditions:
-        story.append(Paragraph(f"<b>{t('conditions')}</b><br/>{conditions}", styles["Normal"]))
+        footer_blocks.append(Paragraph(f"<b>{t('conditions')}</b><br/>{conditions}", small_style))
+        footer_blocks.append(Spacer(1, 5 * mm))
+
+    signatures_table = Table(
+        [[
+            Paragraph("<b>Conforme empresa</b><br/><br/><br/>", small_style),
+            Paragraph("<b>Conforme cliente</b><br/><br/><br/>", small_style),
+        ]],
+        colWidths=[usable_width * 0.48, usable_width * 0.48],
+        hAlign="CENTER",
+    )
+    signatures_table.setStyle(
+        TableStyle(
+            [
+                ("BOX", (0, 0), (0, 0), 0.5, colors.grey),
+                ("BOX", (1, 0), (1, 0), 0.5, colors.grey),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
+            ]
+        )
+    )
+    footer_blocks.append(signatures_table)
+
+    story.append(KeepTogether(footer_blocks))
 
     if include_costs and settings.get("mostrar_costes", False):
         story.append(Spacer(1, 8 * mm))
@@ -217,32 +275,41 @@ def export_quote_pdf(path: Path, quote_id: int, include_costs: bool = False) -> 
                         cost = f"{float(product.cost or 0):.2f}"
                         margin = f"{float(product.margin or 0) * 100:.2f}"
                 internal.append([line.ref_snapshot, line.desc_snapshot, cost, margin])
-        internal_table = Table(internal, hAlign="LEFT")
+        internal_table = Table(internal, hAlign="LEFT", colWidths=[usable_width * 0.15, usable_width * 0.55, usable_width * 0.15, usable_width * 0.15], repeatRows=1)
         internal_table.setStyle(
             TableStyle(
                 [
                     ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
                     ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
+                    ("FONTSIZE", (0, 0), (-1, -1), 8),
                 ]
             )
         )
         story.append(internal_table)
 
-    doc.build(story, onFirstPage=_watermark_if_draft(quote), onLaterPages=_watermark_if_draft(quote))
+    page_decorator = _page_decorator(quote)
+    doc.build(story, onFirstPage=page_decorator, onLaterPages=page_decorator)
     return path
 
 
-def _watermark_if_draft(quote: Quote):
-    def _apply(canvas_: canvas.Canvas, _doc) -> None:
+def _page_decorator(quote: Quote):
+    def _apply(canvas_: canvas.Canvas, doc) -> None:
         status = (quote.status or "").upper()
         if status not in {t("draft").upper(), "BORRADOR", "DRAFT"}:
-            return
+            pass
+        else:
+            canvas_.saveState()
+            canvas_.setFont("Helvetica-Bold", 72)
+            canvas_.setFillColorRGB(0.8, 0.8, 0.8)
+            canvas_.translate(300, 400)
+            canvas_.rotate(45)
+            canvas_.drawCentredString(0, 0, t("draft").upper())
+            canvas_.restoreState()
+
         canvas_.saveState()
-        canvas_.setFont("Helvetica-Bold", 72)
-        canvas_.setFillColorRGB(0.8, 0.8, 0.8)
-        canvas_.translate(300, 400)
-        canvas_.rotate(45)
-        canvas_.drawCentredString(0, 0, t("draft").upper())
+        canvas_.setFont("Helvetica", 8)
+        canvas_.setFillColor(colors.grey)
+        canvas_.drawRightString(doc.pagesize[0] - doc.rightMargin, 8 * mm, f"Página {canvas_.getPageNumber()}")
         canvas_.restoreState()
 
     return _apply
